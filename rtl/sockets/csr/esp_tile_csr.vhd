@@ -155,8 +155,9 @@ architecture rtl of esp_tile_csr is
     constant RESET_DCO_CFG : std_logic_vector(30 downto 0) := dco_reset_config_ovr;
 
     constant DEFAULT_CONFIG : std_logic_vector(ESP_CSR_WIDTH - 1 downto 0) :=
-        DEFAULT_ACC_COH & DEFAULT_DDR_CFG2 & DEFAULT_DDR_CFG1 & DEFAULT_DDR_CFG0 & DEFAULT_CPU_LOC_OVR & DEFAULT_ARIANE_HARTID &
-        DEFAULT_MDC_SCALER_CFG & DEFAULT_DCO_NOC_CFG & RESET_DCO_CFG & DEFAULT_PAD_CFG & DEFAULT_TILE_ID & "0";
+      DEFAULT_TILE_ID & DEFAULT_ACC_COH & DEFAULT_DDR_CFG2 & DEFAULT_DDR_CFG1 & DEFAULT_DDR_CFG0 & DEFAULT_CPU_LOC_OVR &
+      DEFAULT_ARIANE_HARTID & DEFAULT_MDC_SCALER_CFG & DEFAULT_DCO_NOC_CFG & RESET_DCO_CFG & DEFAULT_PAD_CFG &
+      DEFAULT_TILE_ID & "0";
 
   signal csr_addr : integer range 0 to 31;
 
@@ -199,50 +200,53 @@ architecture rtl of esp_tile_csr is
             burst_sample <= apbi.psel(pindex) and apbi.penable and apbi.pwrite;
         end if;
 
-        if apbi.paddr(8 downto 7) = "11" then
-          -- Config read access
-          case csr_addr is
-            when ESP_CSR_VALID_ADDR =>
-              readdata(ESP_CSR_VALID_MSB - ESP_CSR_VALID_LSB downto 0) <=
-                config_r(ESP_CSR_VALID_MSB downto ESP_CSR_VALID_LSB);
-            when ESP_CSR_TILE_ID_ADDR =>
-              readdata(ESP_CSR_TILE_ID_MSB - ESP_CSR_TILE_ID_LSB downto 0) <=
-                config_r(ESP_CSR_TILE_ID_MSB downto ESP_CSR_TILE_ID_LSB);
-            when ESP_CSR_PAD_CFG_ADDR =>
-              readdata(ESP_CSR_PAD_CFG_MSB - ESP_CSR_PAD_CFG_LSB downto 0) <=
-                config_r(ESP_CSR_PAD_CFG_MSB downto ESP_CSR_PAD_CFG_LSB);
-            when ESP_CSR_DCO_CFG_ADDR =>
-              readdata(ESP_CSR_DCO_CFG_MSB - ESP_CSR_DCO_CFG_LSB downto 0) <=
-                config_r(ESP_CSR_DCO_CFG_MSB downto ESP_CSR_DCO_CFG_LSB);
-            when ESP_CSR_DCO_NOC_CFG_ADDR =>
-              readdata(ESP_CSR_DCO_NOC_CFG_MSB - ESP_CSR_DCO_NOC_CFG_LSB downto 0) <=
-                config_r(ESP_CSR_DCO_NOC_CFG_MSB downto ESP_CSR_DCO_NOC_CFG_LSB);
-            when ESP_CSR_MDC_SCALER_CFG_ADDR =>
-              readdata(ESP_CSR_MDC_SCALER_CFG_MSB - ESP_CSR_MDC_SCALER_CFG_LSB downto 0) <=
-                config_r(ESP_CSR_MDC_SCALER_CFG_MSB downto ESP_CSR_MDC_SCALER_CFG_LSB);
-            when ESP_CSR_ARIANE_HARTID_ADDR =>
-              readdata(ESP_CSR_ARIANE_HARTID_MSB - ESP_CSR_ARIANE_HARTID_LSB downto 0) <=
-                config_r(ESP_CSR_ARIANE_HARTID_MSB downto ESP_CSR_ARIANE_HARTID_LSB);
-            when ESP_CSR_CPU_LOC_OVR_ADDR =>
-              readdata(ESP_CSR_CPU_LOC_OVR_MSB - ESP_CSR_CPU_LOC_OVR_LSB downto 0) <=
-                config_r(ESP_CSR_CPU_LOC_OVR_MSB downto ESP_CSR_CPU_LOC_OVR_LSB);
-            when ESP_CSR_DDR_CFG0_ADDR =>
-              readdata(ESP_CSR_DDR_CFG0_MSB - ESP_CSR_DDR_CFG0_LSB downto 0) <=
-                config_r(ESP_CSR_DDR_CFG0_MSB downto ESP_CSR_DDR_CFG0_LSB);
-            when ESP_CSR_DDR_CFG1_ADDR =>
-              readdata(ESP_CSR_DDR_CFG1_MSB - ESP_CSR_DDR_CFG1_LSB downto 0) <=
-                config_r(ESP_CSR_DDR_CFG1_MSB downto ESP_CSR_DDR_CFG1_LSB);
-            when ESP_CSR_DDR_CFG2_ADDR =>
-              readdata(ESP_CSR_DDR_CFG2_MSB - ESP_CSR_DDR_CFG2_LSB downto 0) <= config_r(ESP_CSR_DDR_CFG2_MSB downto ESP_CSR_DDR_CFG2_LSB);
-            when ESP_CSR_ACC_COH_ADDR =>
-              readdata(ESP_CSR_ACC_COH_MSB - ESP_CSR_ACC_COH_LSB downto 0) <= config_r(ESP_CSR_ACC_COH_MSB downto ESP_CSR_ACC_COH_LSB);
-            when ESP_CSR_PM_MIN to ESP_CSR_PM_MIN + PM_REGNUM_CONFIG - 1 =>
-              readdata(31 downto 0) <= pm_config_r(csr_addr - ESP_CSR_PM_MIN);
-            when ESP_CSR_PM_MIN + PM_REGNUM_CONFIG to ESP_CSR_PM_MAX =>
-              readdata(31 downto 0) <= pm_status_r(csr_addr - ESP_CSR_PM_MIN - PM_REGNUM_CONFIG);
-            when others =>
-              readdata <= (others => '0');
-          end case;
+    if apbi.paddr(8 downto 7) = "11" then
+      -- Config read access
+      case csr_addr is
+        when ESP_CSR_VALID_ADDR =>
+          readdata(ESP_CSR_VALID_MSB - ESP_CSR_VALID_LSB downto 0) <= config_r(ESP_CSR_VALID_MSB downto ESP_CSR_VALID_LSB);
+        when ESP_CSR_TILE_ID_ADDR =>
+          readdata(ESP_CSR_TILE_ID_MSB - ESP_CSR_TILE_ID_LSB downto 0) <= config_r(ESP_CSR_TILE_ID_MSB downto ESP_CSR_TILE_ID_LSB);
+        when ESP_CSR_TILE_ID_NOC_ADDR =>
+          readdata(ESP_CSR_TILE_ID_NOC_MSB - ESP_CSR_TILE_ID_NOC_LSB downto 0) <= config_r(ESP_CSR_TILE_ID_NOC_MSB downto ESP_CSR_TILE_ID_NOC_LSB);
+        when ESP_CSR_PAD_CFG_ADDR =>
+          readdata(ESP_CSR_PAD_CFG_MSB - ESP_CSR_PAD_CFG_LSB downto 0) <= config_r(ESP_CSR_PAD_CFG_MSB downto ESP_CSR_PAD_CFG_LSB);
+        when ESP_CSR_DCO_CFG_ADDR =>
+          readdata(ESP_CSR_DCO_CFG_MSB - ESP_CSR_DCO_CFG_LSB downto 0) <= config_r(ESP_CSR_DCO_CFG_MSB downto ESP_CSR_DCO_CFG_LSB);
+        when ESP_CSR_DCO_NOC_CFG_ADDR =>
+          readdata(ESP_CSR_DCO_NOC_CFG_MSB - ESP_CSR_DCO_NOC_CFG_LSB downto 0) <= config_r(ESP_CSR_DCO_NOC_CFG_MSB downto ESP_CSR_DCO_NOC_CFG_LSB);
+        when ESP_CSR_MDC_SCALER_CFG_ADDR =>
+          readdata(ESP_CSR_MDC_SCALER_CFG_MSB - ESP_CSR_MDC_SCALER_CFG_LSB downto 0) <= config_r(ESP_CSR_MDC_SCALER_CFG_MSB downto ESP_CSR_MDC_SCALER_CFG_LSB);
+        when ESP_CSR_ARIANE_HARTID_ADDR =>
+          readdata(ESP_CSR_ARIANE_HARTID_MSB - ESP_CSR_ARIANE_HARTID_LSB downto 0) <= config_r(ESP_CSR_ARIANE_HARTID_MSB downto ESP_CSR_ARIANE_HARTID_LSB);
+        when ESP_CSR_CPU_LOC_OVR_ADDR =>
+          readdata(ESP_CSR_CPU_LOC_OVR_MSB - ESP_CSR_CPU_LOC_OVR_LSB downto 0) <= config_r(ESP_CSR_CPU_LOC_OVR_MSB downto ESP_CSR_CPU_LOC_OVR_LSB);
+        when ESP_CSR_DDR_CFG0_ADDR =>
+          readdata(ESP_CSR_DDR_CFG0_MSB - ESP_CSR_DDR_CFG0_LSB downto 0) <= config_r(ESP_CSR_DDR_CFG0_MSB downto ESP_CSR_DDR_CFG0_LSB);
+        when ESP_CSR_DDR_CFG1_ADDR =>
+          readdata(ESP_CSR_DDR_CFG1_MSB - ESP_CSR_DDR_CFG1_LSB downto 0) <= config_r(ESP_CSR_DDR_CFG1_MSB downto ESP_CSR_DDR_CFG1_LSB);
+        when ESP_CSR_DDR_CFG2_ADDR =>
+          readdata(ESP_CSR_DDR_CFG2_MSB - ESP_CSR_DDR_CFG2_LSB downto 0) <= config_r(ESP_CSR_DDR_CFG2_MSB downto ESP_CSR_DDR_CFG2_LSB);
+        when ESP_CSR_ACC_COH_ADDR =>
+          readdata(ESP_CSR_ACC_COH_MSB - ESP_CSR_ACC_COH_LSB downto 0) <= config_r(ESP_CSR_ACC_COH_MSB downto ESP_CSR_ACC_COH_LSB);
+
+        -- Power management
+        when ESP_CSR_PM_MIN to ESP_CSR_PM_MIN + PM_REGNUM_CONFIG - 1 =>
+          readdata(31 downto 0) <= pm_config_r(csr_addr - ESP_CSR_PM_MIN);
+
+        when ESP_CSR_PM_MIN + PM_REGNUM_CONFIG to ESP_CSR_PM_MAX =>
+          readdata(31 downto 0) <= pm_status_r(csr_addr - ESP_CSR_PM_MIN - PM_REGNUM_CONFIG);
+
+        when others =>
+          readdata <= (others => '0');
+      end case;
+    else
+      -- Monitors read access
+      if addr = 0 then
+        readdata <= burst;
+      elsif addr < MONITOR_REG_COUNT + MONITOR_APB_OFFSET then
+        if burst_state = '0' then
+            readdata <= count(addr - MONITOR_APB_OFFSET);
         else
           -- Monitors read access
           if addr = 0 then
@@ -255,56 +259,62 @@ architecture rtl of esp_tile_csr is
             end if;
           end if;
         end if;
-      end process rd_registers;
+      end if;
+    end if;
+  end process rd_registers;
 
-      wr_registers : process(clk, rstn)
-      begin
-        if rstn =  '0' then
-            burst <= (others => '0');
-            config_r <= DEFAULT_CONFIG;
-            srst <= '0';
-            pm_config_r <= (others => (others => '0'));
-        elsif clk'event and clk = '1' then
-          -- Monitors
-          if burst_sample = '1' then
-            burst <= wdata;
-          end if;
-          -- Config write
-          if apbi.paddr(8 downto 7) = "11" and (apbi.psel(pindex) and apbi.penable and apbi.pwrite) = '1' then
-            case csr_addr is
-              when ESP_CSR_VALID_ADDR =>
-                config_r(ESP_CSR_VALID_MSB downto ESP_CSR_VALID_LSB) <= apbi.pwdata(ESP_CSR_VALID_MSB - ESP_CSR_VALID_LSB downto 0);
-              when ESP_CSR_TILE_ID_ADDR =>
-                config_r(ESP_CSR_TILE_ID_MSB downto ESP_CSR_TILE_ID_LSB) <= apbi.pwdata(ESP_CSR_TILE_ID_MSB - ESP_CSR_TILE_ID_LSB downto 0);
-              when ESP_CSR_PAD_CFG_ADDR =>
-                config_r(ESP_CSR_PAD_CFG_MSB downto ESP_CSR_PAD_CFG_LSB) <= apbi.pwdata(ESP_CSR_PAD_CFG_MSB - ESP_CSR_PAD_CFG_LSB downto 0);
-              when ESP_CSR_DCO_CFG_ADDR =>
-                config_r(ESP_CSR_DCO_CFG_MSB downto ESP_CSR_DCO_CFG_LSB) <= apbi.pwdata(ESP_CSR_DCO_CFG_MSB - ESP_CSR_DCO_CFG_LSB downto 0);
-              when ESP_CSR_DCO_NOC_CFG_ADDR =>
-                config_r(ESP_CSR_DCO_NOC_CFG_MSB downto ESP_CSR_DCO_NOC_CFG_LSB) <= apbi.pwdata(ESP_CSR_DCO_NOC_CFG_MSB - ESP_CSR_DCO_NOC_CFG_LSB downto 0);
-              when ESP_CSR_MDC_SCALER_CFG_ADDR =>
-                config_r(ESP_CSR_MDC_SCALER_CFG_MSB downto ESP_CSR_MDC_SCALER_CFG_LSB) <= apbi.pwdata(ESP_CSR_MDC_SCALER_CFG_MSB - ESP_CSR_MDC_SCALER_CFG_LSB downto 0);
-              when ESP_CSR_ARIANE_HARTID_ADDR =>
-                config_r(ESP_CSR_ARIANE_HARTID_MSB downto ESP_CSR_ARIANE_HARTID_LSB) <= apbi.pwdata(ESP_CSR_ARIANE_HARTID_MSB - ESP_CSR_ARIANE_HARTID_LSB downto 0);
-              when ESP_CSR_CPU_LOC_OVR_ADDR =>
-                config_r(ESP_CSR_CPU_LOC_OVR_MSB downto ESP_CSR_CPU_LOC_OVR_LSB) <= apbi.pwdata(ESP_CSR_CPU_LOC_OVR_MSB - ESP_CSR_CPU_LOC_OVR_LSB downto 0);
-              when ESP_CSR_DDR_CFG0_ADDR =>
-                config_r(ESP_CSR_DDR_CFG0_MSB downto ESP_CSR_DDR_CFG0_LSB) <= apbi.pwdata(ESP_CSR_DDR_CFG0_MSB - ESP_CSR_DDR_CFG0_LSB downto 0);
-              when ESP_CSR_DDR_CFG1_ADDR =>
-                config_r(ESP_CSR_DDR_CFG1_MSB downto ESP_CSR_DDR_CFG1_LSB) <= apbi.pwdata(ESP_CSR_DDR_CFG1_MSB - ESP_CSR_DDR_CFG1_LSB downto 0);
-              when ESP_CSR_DDR_CFG2_ADDR =>
-                config_r(ESP_CSR_DDR_CFG2_MSB downto ESP_CSR_DDR_CFG2_LSB) <= apbi.pwdata(ESP_CSR_DDR_CFG2_MSB - ESP_CSR_DDR_CFG2_LSB downto 0);
-              when ESP_CSR_ACC_COH_ADDR =>
-                config_r(ESP_CSR_ACC_COH_MSB downto ESP_CSR_ACC_COH_LSB) <= apbi.pwdata(ESP_CSR_ACC_COH_MSB - ESP_CSR_ACC_COH_LSB downto 0);
-              -- Power management
-              when ESP_CSR_PM_MIN to ESP_CSR_PM_MIN + PM_REGNUM_CONFIG - 1 =>
-                pm_config_r(csr_addr - ESP_CSR_PM_MIN) <= apbi.pwdata(31 downto 0);
-              when ESP_CSR_SRST_ADDR =>
-                srst <= wdata(0);
-              when others => null;
-            end case;
-          end if;
-        end if;
+  wr_registers : process(clk, rstn)
+  begin
+    if rstn = '0' then
+      burst <= (others => '0');
+      config_r     <= DEFAULT_CONFIG;
+      srst         <= '0';
+      pm_config_r <= (others => (others => '0'));
+    elsif clk'event and clk = '1' then
+      -- Monitors
+      if burst_sample = '1' then
+        burst <= wdata;
+      end if;
+      -- Config write
+      if apbi.paddr(8 downto 7) = "11" and (apbi.psel(pindex) and apbi.penable and apbi.pwrite) = '1' then
+        case csr_addr is
+          when ESP_CSR_VALID_ADDR =>
+            config_r(ESP_CSR_VALID_MSB downto ESP_CSR_VALID_LSB) <= apbi.pwdata(ESP_CSR_VALID_MSB - ESP_CSR_VALID_LSB downto 0);
+          when ESP_CSR_TILE_ID_ADDR =>
+            config_r(ESP_CSR_TILE_ID_MSB downto ESP_CSR_TILE_ID_LSB) <= apbi.pwdata(ESP_CSR_TILE_ID_MSB - ESP_CSR_TILE_ID_LSB downto 0);
+          when ESP_CSR_TILE_ID_NOC_ADDR =>
+            config_r(ESP_CSR_TILE_ID_NOC_MSB downto ESP_CSR_TILE_ID_NOC_LSB) <= apbi.pwdata(ESP_CSR_TILE_ID_NOC_MSB - ESP_CSR_TILE_ID_NOC_LSB downto 0);
+          when ESP_CSR_PAD_CFG_ADDR =>
+            config_r(ESP_CSR_PAD_CFG_MSB downto ESP_CSR_PAD_CFG_LSB) <= apbi.pwdata(ESP_CSR_PAD_CFG_MSB - ESP_CSR_PAD_CFG_LSB downto 0);
+          when ESP_CSR_DCO_CFG_ADDR =>
+            config_r(ESP_CSR_DCO_CFG_MSB downto ESP_CSR_DCO_CFG_LSB) <= apbi.pwdata(ESP_CSR_DCO_CFG_MSB - ESP_CSR_DCO_CFG_LSB downto 0);
+          when ESP_CSR_DCO_NOC_CFG_ADDR =>
+            config_r(ESP_CSR_DCO_NOC_CFG_MSB downto ESP_CSR_DCO_NOC_CFG_LSB) <= apbi.pwdata(ESP_CSR_DCO_NOC_CFG_MSB - ESP_CSR_DCO_NOC_CFG_LSB downto 0);
+          when ESP_CSR_MDC_SCALER_CFG_ADDR =>
+            config_r(ESP_CSR_MDC_SCALER_CFG_MSB downto ESP_CSR_MDC_SCALER_CFG_LSB) <= apbi.pwdata(ESP_CSR_MDC_SCALER_CFG_MSB - ESP_CSR_MDC_SCALER_CFG_LSB downto 0);
+          when ESP_CSR_ARIANE_HARTID_ADDR =>
+            config_r(ESP_CSR_ARIANE_HARTID_MSB downto ESP_CSR_ARIANE_HARTID_LSB) <= apbi.pwdata(ESP_CSR_ARIANE_HARTID_MSB - ESP_CSR_ARIANE_HARTID_LSB downto 0);
+          when ESP_CSR_CPU_LOC_OVR_ADDR =>
+            config_r(ESP_CSR_CPU_LOC_OVR_MSB downto ESP_CSR_CPU_LOC_OVR_LSB) <= apbi.pwdata(ESP_CSR_CPU_LOC_OVR_MSB - ESP_CSR_CPU_LOC_OVR_LSB downto 0);
+          when ESP_CSR_DDR_CFG0_ADDR =>
+            config_r(ESP_CSR_DDR_CFG0_MSB downto ESP_CSR_DDR_CFG0_LSB) <= apbi.pwdata(ESP_CSR_DDR_CFG0_MSB - ESP_CSR_DDR_CFG0_LSB downto 0);
+          when ESP_CSR_DDR_CFG1_ADDR =>
+            config_r(ESP_CSR_DDR_CFG1_MSB downto ESP_CSR_DDR_CFG1_LSB) <= apbi.pwdata(ESP_CSR_DDR_CFG1_MSB - ESP_CSR_DDR_CFG1_LSB downto 0);
+          when ESP_CSR_DDR_CFG2_ADDR =>
+            config_r(ESP_CSR_DDR_CFG2_MSB downto ESP_CSR_DDR_CFG2_LSB) <= apbi.pwdata(ESP_CSR_DDR_CFG2_MSB - ESP_CSR_DDR_CFG2_LSB downto 0);
+          when ESP_CSR_ACC_COH_ADDR =>
+            config_r(ESP_CSR_ACC_COH_MSB downto ESP_CSR_ACC_COH_LSB) <= apbi.pwdata(ESP_CSR_ACC_COH_MSB - ESP_CSR_ACC_COH_LSB downto 0);
+          when ESP_CSR_SRST_ADDR =>
+            srst <= wdata(0);
+
+          -- Power management
+          when ESP_CSR_PM_MIN to ESP_CSR_PM_MIN + PM_REGNUM_CONFIG - 1 =>
+            pm_config_r(csr_addr - ESP_CSR_PM_MIN) <= apbi.pwdata(31 downto 0);
+
+          when others => null;
+        end case;
+      end if;
+    end if;
   end process wr_registers;
 
   --"burst" mode provides synchronization to all monitors in a tile

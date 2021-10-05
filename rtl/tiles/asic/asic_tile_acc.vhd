@@ -149,7 +149,7 @@ architecture rtl of asic_tile_acc is
   signal dco_fc_sel   : std_logic_vector(5 downto 0);
   signal dco_div_sel  : std_logic_vector(2 downto 0);
   signal dco_freq_sel : std_logic_vector(1 downto 0);
-  
+
   -- Tile parameters
   signal tile_config : std_logic_vector(ESP_CSR_WIDTH - 1 downto 0);
 
@@ -200,7 +200,7 @@ architecture rtl of asic_tile_acc is
   signal noc6_mon_noc_vec_int : monitor_noc_type;
 
   -- Noc signals
-  signal noc_rstn                    : std_ulogic;
+  signal noc_rstn                : std_ulogic;
   signal noc1_stop_in_tile       : std_ulogic;
   signal noc1_stop_out_tile      : std_ulogic;
   signal noc1_data_void_in_tile  : std_ulogic;
@@ -225,18 +225,18 @@ architecture rtl of asic_tile_acc is
   signal noc6_stop_out_tile      : std_ulogic;
   signal noc6_data_void_in_tile  : std_ulogic;
   signal noc6_data_void_out_tile : std_ulogic;
-  signal noc1_input_port_tile        : coh_noc_flit_type;
-  signal noc2_input_port_tile        : coh_noc_flit_type;
-  signal noc3_input_port_tile        : coh_noc_flit_type;
-  signal noc4_input_port_tile        : dma_noc_flit_type;
-  signal noc5_input_port_tile        : misc_noc_flit_type;
-  signal noc6_input_port_tile        : dma_noc_flit_type;
-  signal noc1_output_port_tile       : coh_noc_flit_type;
-  signal noc2_output_port_tile       : coh_noc_flit_type;
-  signal noc3_output_port_tile       : coh_noc_flit_type;
-  signal noc4_output_port_tile       : dma_noc_flit_type;
-  signal noc5_output_port_tile       : misc_noc_flit_type;
-  signal noc6_output_port_tile       : dma_noc_flit_type;
+  signal noc1_input_port_tile    : coh_noc_flit_type;
+  signal noc2_input_port_tile    : coh_noc_flit_type;
+  signal noc3_input_port_tile    : coh_noc_flit_type;
+  signal noc4_input_port_tile    : dma_noc_flit_type;
+  signal noc5_input_port_tile    : misc_noc_flit_type;
+  signal noc6_input_port_tile    : dma_noc_flit_type;
+  signal noc1_output_port_tile   : coh_noc_flit_type;
+  signal noc2_output_port_tile   : coh_noc_flit_type;
+  signal noc3_output_port_tile   : coh_noc_flit_type;
+  signal noc4_output_port_tile   : dma_noc_flit_type;
+  signal noc5_output_port_tile   : misc_noc_flit_type;
+  signal noc6_output_port_tile   : dma_noc_flit_type;
 
 begin
 
@@ -433,6 +433,7 @@ begin
       dco_cc_sel              => dco_cc_sel,
       dco_clk_sel             => dco_clk_sel,
       dco_en                  => dco_en,
+      dco_clk_delay_sel       => open,
       -- pad config
       pad_cfg                 => pad_cfg,
       -- NoC

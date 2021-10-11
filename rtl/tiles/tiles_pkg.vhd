@@ -287,8 +287,7 @@ package tiles_pkg is
     generic (
       SIMULATION   : boolean := false;
       this_has_dco : integer range 0 to 1 := 0;
-      this_has_ddr : integer range 0 to 1 := 1;
-      dco_rst_cfg  : std_logic_vector(30 downto 0) := (others => '0'));
+      this_has_ddr : integer range 0 to 1 := 1);
     port (
       raw_rstn           : in  std_ulogic;
       tile_rst           : in  std_ulogic;
@@ -428,8 +427,7 @@ package tiles_pkg is
     generic (
       SIMULATION   : boolean := false;
       this_has_dco : integer range 0 to 1 := 0;
-      this_has_ddr : integer range 0 to 1 := 0;
-      dco_rst_cfg  : std_logic_vector(30 downto 0) := (others => '0'));
+      this_has_ddr : integer range 0 to 1 := 0);
     port (
       raw_rstn           : in  std_ulogic;
       tile_rst           : in  std_ulogic;

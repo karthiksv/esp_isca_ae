@@ -357,8 +357,7 @@ begin
     generic map (
       SIMULATION   => SIMULATION,
       this_has_dco => this_has_dco,
-      this_has_ddr => 0,
-      dco_rst_cfg  => (others => '0'))
+      this_has_ddr => 0)
     port map (
       raw_rstn            => raw_rstn,
       tile_rst            => tile_rst,

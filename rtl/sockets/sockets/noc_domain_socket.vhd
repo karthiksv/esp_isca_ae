@@ -139,7 +139,8 @@ entity noc_domain_socket is
 
     -- monitors
     mon_noc            : out monitor_noc_vector(1 to 6);
-	acc_activity	   : in std_ulogic;
+    acc_activity	   : in std_ulogic;
+    LDOCTRL			   : out std_logic_vector(7 downto 0);
 
     -- synchronizers out to tile
     noc1_output_port_tile   : out coh_noc_flit_type;
@@ -634,8 +635,9 @@ begin  -- architecture rtl
         noc5_data_void_out => noc5_data_void_out_pm,
         noc5_stop_in       => noc5_stop_in_pm,
         acc_clk            => acc_clk,
-        acc_activity       => acc_activity
-		);
+        acc_activity       => acc_activity,
+        LDOCTRL 		   => LDOCTRL
+    );
   end generate;
 
   no_token_pm_gen : if this_has_token_pm = 0 generate
@@ -644,6 +646,7 @@ begin  -- architecture rtl
     noc5_input_port_pm   <= (others => '0');
     noc5_data_void_in_pm <= '1';
     noc5_stop_in_pm      <= '0';
+    LDOCTRL <= (others => '0');
   end generate;
 
   noc5_mux_i : noc5_mux

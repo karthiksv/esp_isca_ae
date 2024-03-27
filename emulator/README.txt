@@ -12,9 +12,10 @@ b)The results may show small variations compared to the data included in the pap
 The following Python code can be run to reproduce the results presented in the paper:
 
 1/convergence_speed_BC_4way.py and convergence_speed_BC_baseline.py 
-This generates the 4-way (blue) and the 1-way data (red) respectivel shown in figure 3
+This generates the 4-way (blue) and the 1-way data (red) respectively shown in figure 3
 
-2/[Todo TS]
+2/convergence_speed_TS_boxplot.py and convergence_speed_BS_boxplot.py
+This generates the TokenSmart (TS, blue) and the BlitzCoin (BC, orange) respectively shown in figure 4
 
 3/convergence_speed_BC_baseline.py and convergence_speed_BC_smart_timing.py
 This generates the 'default' data (red) and the 'dynamic timing' data (blue) respectivel shown in figure 6
@@ -25,5 +26,4 @@ Generates the data and histogram plots for the N=10x10 and N=20x20 cases of figu
 5/convergence_heterogeneity.py. 
 This generates the data presented in figure 8
 
-Note that execpt in the case of figure 7, the results of the simulations are displayed in text format and can be post-processed to generate the plots in the figure (e.g. using excel)
 

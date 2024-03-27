@@ -4,6 +4,7 @@ import numpy as np
 from random import random
 from random import seed
 import matplotlib.pyplot as plt
+from random import shuffle
 
 def is_hotspot(a_has, a_needs, x, y, N):
 	center_val = a_has[x][y]-a_needs[x][y]
@@ -18,7 +19,7 @@ def is_hotspot(a_has, a_needs, x, y, N):
 	
 	
 
-def one_pass(autostop,eps,N,Ttot,Tstep_avg,Tstep_range,tmax,Navg_need,circular,norm,smart_time,Nway,refresh_max,refresh_min):
+def one_pass(autostop,eps,N,Ttot,Tstep_avg,Tstep_range,tmax,Navg_need,circular,norm,smart_time,Nway,refresh_max,refresh_min,Nacc):
 	#If autostop, sims breaks after reachingg Err threshold
 	#eps: Err threshold
 	#N : side of the squre, N^2 agents
@@ -27,7 +28,7 @@ def one_pass(autostop,eps,N,Ttot,Tstep_avg,Tstep_range,tmax,Navg_need,circular,n
 	#tmax max number of ticks to run
 	#Token need is andom uniform selection between [0;2*Navg_need]
 	#If circluar, connections are made betwen bottom/top and left/right
-	#Norm: Norm used to measure the total error, 0 1 or 2. 1: sum of abs, 2 sum of squares 
+	#Norm: Norm used to measure the total error 1 or 2. 1: sum of abs, 2 sum of squares 
 	#smart_time: Enable exponential backoff 
 	
 
@@ -52,7 +53,25 @@ def one_pass(autostop,eps,N,Ttot,Tstep_avg,Tstep_range,tmax,Navg_need,circular,n
 	#Initialize the tokens needs, has and timer
 
 	agents_refresh=((np.random.rand(N,N)-0.5)*Tstep_range*2+Tstep_avg).astype(int)
-	agents_needs=(np.random.rand(N,N)*Navg_need*2).astype(int)
+	#needs_accs=(np.random.rand(Nacc)*Navg_need*2).astype(int)
+	#if (needs_accs.max()==0):
+	#	needs_accs=(np.random.rand(Nacc)*Navg_need*2).astype(int)	
+	needs_accs_tmp=np.linspace(0,Navg_need*2,Nacc+2)
+	#print(needs_accs_tmp)
+	needs_accs=needs_accs_tmp[1:-1]
+	#print(needs_accs)
+	agents_needs=np.zeros((N,N))
+	xy=np.arange(N**2)
+	shuffle(xy)
+	#print(xy)
+	int_step=int(N**2/Nacc)
+	for k in range(Nacc):
+		for i in range (k*int_step,(k+1)*int_step,1):
+			agents_needs[xy[i]%N][xy[i]//N]=needs_accs[k]
+		for i in range (Nacc*int_step,N**2,1):#Allocate the rest
+			agents_needs[xy[i]%N][xy[i]//N]=needs_accs[int(Nacc*random())]
+
+	#print(agents_needs)
 	agents_has=np.zeros((N,N))
 	agents_timer=np.zeros((N,N))
 	agents_corner=(np.random.rand(N,N)*4).astype(int)#0-3 as N,S,E,W
@@ -147,18 +166,16 @@ def one_pass(autostop,eps,N,Ttot,Tstep_avg,Tstep_range,tmax,Navg_need,circular,n
 					agents_corner[x][y]=(agents_corner[x][y]+1)%Nway
 					
 					#Compute hotspots, when has>=max for the tiles and all its neighbors
-					if (i>0 and agents_has[x][y]>0):	#thermal emergency only when tile is active for more than 1 iteration and after 1st iteration 
-							if (last_hotspot[x][y]==1):
-								hotspot = is_hotspot(agents_has, agents_needs, x, y, N) 
-							last_hotspot[x][y] = 1					
-					else:
-						hotspot = 0
-						last_hotspot[x][y] = 0
+					#if (i>0 and agents_has[x][y]>0):	#thermal emergency only when tile is active for more than 1 iteration and after 1st iteration 
+					##		if (last_hotspot[x][y]==1):
+					#			hotspot = is_hotspot(agents_has, agents_needs, x, y, N) 
+					#		last_hotspot[x][y] = 1					
+					#else:
+					#	hotspot = 0
+					#	last_hotspot[x][y] = 0
 
 					num_hotspots =  num_hotspots + hotspot
 				
 						
-	#plt.plot(sq_error);
-
 	return(sq_error,total_exchanges,i,agents_ref_monitored,np.max(abs(agents_has-(agents_needs*Ttot*1.0/np.sum(agents_needs)))), num_hotspots)
 	

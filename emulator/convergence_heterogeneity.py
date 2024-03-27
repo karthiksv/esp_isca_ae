@@ -7,17 +7,15 @@ from random import shuffle
 
 import matplotlib.pyplot as plt
 
-#from one_pass_token import one_pass
 from one_pass_token_smart_timing_heter import one_pass
 
 #Specific to this experiment
 Nlist=[2,3,4,5,8,10,12,15,18,20]
 Nacclist=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-
-circular=True
 autostop=True
+circular=True
 smart_time=False
-eps=1.5#1.5
+eps=1.5
 norm=1
 Nway=16#17 for random
 #Common between all experiments
@@ -26,6 +24,7 @@ Tstep_range=10
 Navg_need=100
 Npass=100
 
+#Only used for Smart timing
 refresh_max=10
 refresh_min=10
 
@@ -47,7 +46,6 @@ for Nacc in Nacclist:
 		print(Nacc,N)
 		if(N**2>=Nacc):
 			tmax=N*20*Tstep_avg
-			#tmax=3
 			Ttot=50*N**2
 			nb_noncov=0
 			hotspot_iters=np.zeros(Npass)

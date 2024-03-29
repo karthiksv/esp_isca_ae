@@ -11,8 +11,9 @@ convergence_speed_BC_4way()
 from convergence_speed_BC_smart_timing import *
 convergence_speed_BC_smart_timing()
 
-#from convergence_heterogeneity import *
-#convergence_heterogeneity()
+from convergence_heterogeneity import *
+convergence_heterogeneity()
+
 if PLOT:
 	
 	plt.figure('1-way vs 4 way')	

@@ -11,8 +11,7 @@ convergence_speed_BC_4way()
 from convergence_speed_BC_smart_timing import *
 convergence_speed_BC_smart_timing()
 
-from convergence_heterogeneity import *
-convergence_heterogeneity()
+
 
 if PLOT:
 	
@@ -57,5 +56,4 @@ if PLOT:
 	ax2.set_ylabel('Num packets exchanged')
 
 	plt.show()
-	#from convergence_heterogeneity import *
-	#convergence_heterogeneity()
+

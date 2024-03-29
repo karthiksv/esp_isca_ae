@@ -91,3 +91,4 @@ def convergence_heterogeneity():
 		fconv.close()
 		ferr.close()
 
+print("Please use heterogeneity_python_post_process.xls for generating graphs form csv \n")

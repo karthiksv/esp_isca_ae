@@ -47,3 +47,4 @@ for N in Nlist:
 	print(N,np.mean(conv_time),np.max(conv_time),np.min(conv_time))
 	
 
+print("Please use BC_vs_TS_post_process.xls for generating graphs form csv \n")

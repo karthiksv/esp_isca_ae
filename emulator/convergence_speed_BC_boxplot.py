@@ -31,6 +31,7 @@ nb_noncov=0
 
 print("N,conv_time,num_exch,mean_err,max_err,num_nonconvergence")
 myfile=open("BC_boxplot.csv", "w")
+
 for N in Nlist:
 	tmax=N*200*Tstep_avg
 	Ttot=50*N**2
@@ -46,3 +47,4 @@ for N in Nlist:
 	print(N,np.mean(conv_time),np.max(conv_time),np.min(conv_time))
 	
 
+print("Please use BC_vs_TS_post_process.xls for generating graphs form csv \n")

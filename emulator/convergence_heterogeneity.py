@@ -6,6 +6,7 @@ from random import seed
 from random import shuffle
 
 import matplotlib.pyplot as plt
+import pandas as pd
 
 from one_pass_token_smart_timing_heter import one_pass
 
@@ -34,31 +35,59 @@ maxerr=np.zeros(Npass)
 initial_err=np.zeros(Npass)
 nb_noncov=0
 
-print("N,conv_time,num_exch,mean_err,max_err,num_nonconvergence,num_emergencies")
-conv_timeA=np.zeros((len(Nacclist),len(Nlist)))
-init_errA=np.zeros((len(Nacclist),len(Nlist)))
+#File write
+conv_file = "conv_het_file.csv"
+err_file = "err_het_file.csv"
 
-u=0
-v=0
-for Nacc in Nacclist:
+GEN_CSV=1
+
+def convergence_heterogeneity():
+	u=0
 	v=0
-	for N in Nlist:
-		print(Nacc,N)
-		if(N**2>=Nacc):
-			tmax=N*20*Tstep_avg
-			Ttot=50*N**2
-			nb_noncov=0
-			hotspot_iters=np.zeros(Npass)
-			for i in range (Npass):
-				sq_n,num_exch[i],conv_time[i],foobar,maxerr[i],hotspot_iters[i]=one_pass(autostop,eps,N,Ttot,Tstep_avg,Tstep_range,tmax,Navg_need,circular,norm,smart_time,Nway,refresh_max,refresh_min,Nacc)
-				initial_err[i]=sq_n[0]
-			if(conv_time[i]==(tmax-1)):
-				nb_noncov=nb_noncov+1
-			#	break
-			conv_timeA[u][v]=np.mean(conv_time)
-			init_errA[u][v]=np.mean(initial_err)
-		v=v+1
-	u=u+1
 
-print(conv_timeA)
-print(init_errA)
+	#print("Nacc,N,conv_time,num_exch,mean_err,max_err,num_nonconvergence,num_emergencies")
+	conv_timeA=np.zeros((len(Nlist),len(Nacclist)))
+	init_errA=np.zeros((len(Nlist),len(Nacclist)))
+
+	if GEN_CSV:
+		fconv = open(conv_file, 'w')
+		ferr = open(err_file, 'w')
+
+		fconv.write("Nacc,N,conv_time\n")
+		ferr.write("Nacc,N,init_err\n")
+		
+		for N in Nlist:
+			v=0
+			fconv.write(str(N)+",")
+			ferr.write(str(N)+",")
+			for Nacc in Nacclist:
+				if(N**2>=Nacc):
+					tmax=N*20*Tstep_avg
+					Ttot=50*N**2
+					nb_noncov=0
+					hotspot_iters=np.zeros(Npass)
+
+					for i in range (Npass):
+						sq_n,num_exch[i],conv_time[i],foobar,maxerr[i],hotspot_iters[i]=one_pass(autostop,eps,N,Ttot,Tstep_avg,Tstep_range,tmax,Navg_need,circular,norm,smart_time,Nway,refresh_max,refresh_min,Nacc)
+						initial_err[i]=sq_n[0]
+						if(conv_time[i]==(tmax-1)):
+							nb_noncov=nb_noncov+1
+							# break
+
+					conv_timeA[u][v]=np.mean(conv_time)
+					init_errA[u][v]=np.mean(initial_err)
+					fconv.write(str(conv_timeA[u][v]) + ",")
+					ferr.write(str(init_errA[u][v]) + ",")
+					#fconv.write(str(Nacc)+","+str(N)+","+str(conv_timeA[u][v]))
+					#ferr.write(str(Nacc)+","+str(N)+","+str(init_errA[u][v]))
+				else:
+					fconv.write("0,")
+					ferr.write("0,")
+				v=v+1
+			fconv.write("\n")
+			ferr.write("\n")
+			u=u+1
+
+		fconv.close()
+		ferr.close()
+

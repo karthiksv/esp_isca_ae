@@ -1,7 +1,6 @@
 ![Open-ESP](esp-logo-small.png)
 
-[![DOI](https://zenodo.org/badge/190284572.svg)](https://zenodo.org/badge/latestdoi/190284572)
-
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10895299.svg)](https://doi.org/10.5281/zenodo.10895299)
 
 **Instructions regarding artifact evaluation for ISCA 2024 submssion**
 
@@ -11,7 +10,7 @@ We provide two options for the artifact evaluation:
 
 2/A docker image can be used as a starting point, with the full setup pre-built, which avoids dependencies complications and shortens evaluation time.
 
-We are currently finishing this docker setup and are expecting to have it available by the first week of April. Hence, we recomend the following evaluation steps:
+We are currently (as of 3/29) finishing this docker setup and are expecting to have it available by the first week of April. Hence, we recomend the following evaluation steps:
 
 a)Use a clone of the git repo to run the experimens in the anaytical_scaling and emulator directories. Those are pyhton-based scripts with minimal build or dependencies require. This reproduces the results in figures 3, 4, 6, 7, 8 and 21.
 

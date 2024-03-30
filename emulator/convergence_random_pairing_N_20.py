@@ -21,7 +21,7 @@ Tstep_range=5
 tmax=N*20*Tstep_avg
 #tmax=3540*10
 Ttot=50*N**2
-Navg_need=1000
+Navg_need=100
 norm=0
 
 sq_n=np.zeros(tmax)

@@ -13,14 +13,14 @@ N=10
 circular=True
 autostop=False
 eps=1
-Npass=100
+Npass=1000
 
 #Common between all experiments
 Tstep_avg=50
 Tstep_range=5
 tmax=N*20*Tstep_avg
 Ttot=50*N**2
-Navg_need=1000
+Navg_need=100
 norm=0
 
 sq_n=np.zeros(tmax)

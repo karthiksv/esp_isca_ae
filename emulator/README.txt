@@ -31,6 +31,7 @@ This generates the data for TokenSmart (TS, blue) and the BlitzCoin (BC, orange)
 
 5/convergence_heterogeneity.py
 This generates the data presented in figure 8. The data is saved as csv and can be processed with Excel (heterogeneity_python_post_process.xls) to generate the figure as displayed in the paper.
-The function can be invoked in a python3 session with
+The function can be invoked in a python3 session with the following code:
+
 from convergence_heterogeneity import *
 convergence_heterogeneity()

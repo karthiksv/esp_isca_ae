@@ -20,7 +20,7 @@ This generates the 4-way (blue) and the 1-way data (red) respectively shown in f
 This generates the 'default' data (red) and the 'dynamic timing' data (blue) respectively shown in figure 6
 
 
-The steps 1-2 can be run together with data plotting by calling exp_36.py
+The steps 1-2 as well as 5 (below) can be run together with data plotting by calling exp_36.py
 
 3/convergence_random_pairing_N_10.py and convergence_random_pairing_N_20.py 
 Generates the data and histogram plots for the N=10x10 and N=20x20 cases of figure 7

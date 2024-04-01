@@ -1,3 +1,4 @@
+techmap/inferred/SyncSpRamBeNx64.sv
 techmap/virtex7/sram_b/unisim_sram_b_10abits.v
 techmap/virtex7/sram_b/unisim_sram_b_16abits.v
 techmap/virtex7/sram_b/unisim_sram_b_14abits.v

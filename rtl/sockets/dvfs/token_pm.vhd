@@ -176,11 +176,11 @@ begin
   acc_clk <= acc_clk_int;
   plllock <= plllock1 and plllock2;
 
-  no_clk_mux : if (is_asic = true) generate
+  no_clk_mux : if (true) generate
     acc_clk_int <= refclk;
   end generate;
 
-  clk_mux : if (is_asic = false) generate
+  clk_mux : if (false) generate
     pll_rst <= not raw_rstn;
 
     freq_sel(0) <= LDO4;
@@ -211,7 +211,7 @@ begin
     freq_sel2 <= '1' when freq_sel_sync(2) = '1' else '0';  -- avoid X propagation
     freq_sel3 <= '1' when freq_sel_sync(3) = '1' else '0';  -- avoid X propagation
 
-    xcvup : if (tech = virtexup) generate
+    xcvup : if (false) generate
     pll_virtexup_1: pll_virtexup
       generic map (
         clk_mul    => 16,

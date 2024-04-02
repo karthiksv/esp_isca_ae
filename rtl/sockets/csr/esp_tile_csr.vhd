@@ -19,7 +19,8 @@ use work.nocpackage.all;
 entity esp_tile_csr is
   generic (
     pindex      : integer range 0 to NAPBSLV -1 := 0;
-    has_ddr     : boolean := false);
+    has_ddr     : boolean := false;
+    dco_rst_cfg : std_logic_vector(30 downto 0) := (others => '0'));
   port (
     clk         : in  std_logic;
     rstn        : in  std_logic;
@@ -116,10 +117,10 @@ architecture rtl of esp_tile_csr is
 
   constant UNUSED_DDR_CFG : std_logic_vector(31 downto 0) := (others => '0');
 
-  constant DEFAULT_CONFIG : std_logic_vector(ESP_CSR_WIDTH - 1 downto 0) :=
-    UNUSED_LDO_CFG & DEFAULT_TILE_ID & DEFAULT_ACC_COH & UNUSED_DDR_CFG & UNUSED_DDR_CFG &
-    UNUSED_DDR_CFG & DEFAULT_CPU_LOC_OVR & DEFAULT_ARIANE_HARTID & UNUSED_MDC_SCALER_CFG &
-    UNUSED_DCO_NOC_CFG & UNUSED_DCO_CFG & UNUSED_PAD_CFG & DEFAULT_TILE_ID & "0";
+  constant DEFAULT_CONFIG : std_logic_vector(ESP_CSR_WIDTH - 1 downto 0) :=(others => '0');
+    --UNUSED_LDO_CFG & DEFAULT_TILE_ID & DEFAULT_ACC_COH & UNUSED_DDR_CFG & UNUSED_DDR_CFG &
+   -- UNUSED_DDR_CFG & DEFAULT_CPU_LOC_OVR & DEFAULT_ARIANE_HARTID & UNUSED_MDC_SCALER_CFG &
+   -- UNUSED_DCO_NOC_CFG & UNUSED_DCO_CFG & UNUSED_PAD_CFG & DEFAULT_TILE_ID & "0";
 
   signal csr_addr : integer range 0 to 31;
 

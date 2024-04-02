@@ -28,7 +28,7 @@ ESP_DEFCONFIG = $(DESIGN_PATH)/esp_defconfig
 
 
 ### Design top level and testbench ###
-CHIP_TOP = ESP_ASIC_TOP
+CHIP_TOP = ASIC_3x3_TOP
 TOP = fpga_proxy_top
 SIMTOP = testbench
 

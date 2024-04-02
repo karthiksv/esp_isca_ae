@@ -261,7 +261,7 @@ constant has_pll : tech_ability_type :=
      (virtex7 => 1, virtexup => 1, virtexu => 1,  others => 0);
 
 constant has_dco : tech_ability_type :=
-     (gf12 => 1, virtexup => 1,  others => 0);
+     (gf12 => 1, inferred => 1,  others => 0);
 
 -- pragma translate_off
 

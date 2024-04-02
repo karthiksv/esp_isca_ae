@@ -72,7 +72,9 @@ entity ASIC_3x3_TOP is
     etx_en          : out   std_ulogic;
     etx_er          : out   std_ulogic;
     emdc            : out   std_ulogic;
-    emdio           : inout std_logic;
+    emdio_i           : in std_logic;
+    emdio_o           : out std_logic;
+
     -- UART
     uart_rxd        : in    std_logic;  -- UART1_RX (u1i.rxd)
     uart_txd        : out   std_logic;  -- UART1_TX (u1o.txd)
@@ -233,8 +235,8 @@ architecture rtl of ASIC_3x3_TOP is
   signal etx_en_int      : std_ulogic;
   signal etx_er_int      : std_ulogic;
   signal emdc_int        : std_ulogic;
-  signal emdio_i         : std_logic;
-  signal emdio_o         : std_logic;
+  --signal emdio_i         : std_logic;
+  --signal emdio_o         : std_logic;
   signal emdio_oe        : std_logic;
   -- -- DVI
   -- signal dvi_nhpd        : std_ulogic;

@@ -15,9 +15,12 @@ use work.socmap.all;
 entity top is
   generic (
     SIMULATION : boolean                               := false;
+    CLUSTER_EN : boolean                               := true;
     JTAG_TRACE : integer range -1 to CFG_TILES_NUM - 1 := -1);
   port (
     reset             : in    std_logic;
+    clk_div_noc       : out   std_logic;
+    clk_div           : out   std_logic_vector(0 to CFG_TILES_NUM - 1);  -- tile clock monitor for testing purposes
     -- Ethernet signals
     reset_o2          : out   std_ulogic;
     etx_clk           : in    std_ulogic;
@@ -33,6 +36,7 @@ entity top is
     emdc              : out   std_ulogic;
     emdio_i           : in    std_logic; --for chip with no pads to remove inouts
     emdio_o           : out   std_logic; --DO NOT USE for real ethernet implementation
+
     -- UART
     uart_rxd          : in    std_logic;   -- UART1_RX (u1i.rxd)
     uart_txd          : out   std_logic;   -- UART1_TX (u1o.txd)
@@ -88,20 +92,35 @@ architecture rtl of top is
   -----------------------------------------------------------------------------
   -- ESP chip specific instance
   -----------------------------------------------------------------------------
-  component ESP_ASIC_TOP is
+  component ASIC_3x3_TOP is
     generic (
+      CLUSTER_EN : boolean;
       SIMULATION : boolean);
     port (
       reset           : in    std_logic;
-      ext_clk         : in    std_logic;
-      fpga_data_in    : in std_logic_vector(64 - 1 downto 0);
-      fpga_data_out   : out std_logic_vector(64 - 1 downto 0);
+      ext_clk_noc     : in    std_logic;
+      ext_clk_io      : in    std_logic;
+      ext_clk_cpu     : in    std_logic;
+      ext_clk_mem     : in    std_logic;
+      clk_div_noc     : out   std_logic;
+      clk_div_io      : out   std_logic;
+      clk_div_cpu     : out   std_logic;
+      clk_div_mem     : out   std_logic;
+      fpga_data       : inout std_logic_vector(64 - 1 downto 0);
       fpga_valid_in   : in    std_logic_vector(0 downto 0);
       fpga_valid_out  : out   std_logic_vector(0 downto 0);
       fpga_clk_in     : in    std_logic_vector(0 downto 0);
       fpga_clk_out    : out   std_logic_vector(0 downto 0);
       fpga_credit_in  : in    std_logic_vector(0 downto 0);
       fpga_credit_out : out   std_logic_vector(0 downto 0);
+      tdi_cpu         : in    std_logic;
+      tdi_io          : in    std_logic;
+      tdi_mem         : in    std_logic;
+      tdo_cpu         : out   std_logic;
+      tdo_io          : out   std_logic;
+      tdo_mem         : out   std_logic;
+      tms             : in    std_logic;
+      tclk            : in    std_logic;
       reset_o2        : out   std_ulogic;
       etx_clk         : in    std_ulogic;
       erx_clk         : in    std_ulogic;
@@ -114,22 +133,22 @@ architecture rtl of top is
       etx_en          : out   std_ulogic;
       etx_er          : out   std_ulogic;
       emdc            : out   std_ulogic;
-      emdio_i         : in std_logic;
-      emdio_o         : out std_logic;
+      emdio_i           : in std_logic;      
+      emdio_o           : out std_logic;
       uart_rxd        : in    std_logic;
       uart_txd        : out   std_logic;
       uart_ctsn       : in    std_logic;
       uart_rtsn       : out   std_logic;
-      tdi_io          : in    std_logic;
-      tdi_cpu         : in    std_logic;
-      tdi_mem         : in    std_logic;
-      tdi_acc         : in    std_logic;
-      tdo_io          : out   std_logic;
-      tdo_cpu         : out   std_logic;
-      tdo_mem         : out   std_logic;
-      tdo_acc         : out   std_logic
-    );
-  end component ESP_ASIC_TOP;
+      ivr_pmb_dat     : in    std_ulogic;
+      ivr_pmb_clk     : in    std_ulogic;
+      ivr_avs_clk     : in    std_ulogic;
+      ivr_avs_dat     : in    std_ulogic;
+      ivr_avs_sdat    : in    std_ulogic;
+      ivr_control     : in    std_ulogic;
+      ivr_gpio        : in    std_logic_vector(3 downto 0);
+      unused          : in    std_ulogic
+      );
+  end component ASIC_3x3_TOP;
 
   component fpga_proxy_top is
     generic (
@@ -141,8 +160,7 @@ architecture rtl of top is
       ext_clk           : out   std_logic_vector(0 to CFG_TILES_NUM - 1);
       main_clk_p        : in    std_ulogic;
       main_clk_n        : in    std_ulogic;
-      fpga_data_out     : in    std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
-      fpga_data_in      : out std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
+      fpga_data         : inout std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
       fpga_valid_in     : out   std_logic_vector(0 to CFG_NMEM_TILE - 1);
       fpga_valid_out    : in    std_logic_vector(0 to CFG_NMEM_TILE - 1);
       fpga_clk_in       : out   std_logic_vector(0 to CFG_NMEM_TILE - 1);
@@ -191,8 +209,7 @@ architecture rtl of top is
   end component fpga_proxy_top;
 
   -- FPGA proxy memory link
-  signal fpga_data_in    : std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
-  signal fpga_data_out   : std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
+  signal fpga_data       : std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
   signal fpga_valid_in   : std_logic_vector(CFG_NMEM_TILE - 1 downto 0);
   signal fpga_valid_out  : std_logic_vector(CFG_NMEM_TILE - 1 downto 0);
   signal fpga_clk_in     : std_logic_vector(CFG_NMEM_TILE - 1 downto 0);
@@ -227,8 +244,7 @@ begin
       ext_clk           => ext_clk,
       main_clk_p        => main_clk_p,
       main_clk_n        => main_clk_n,
-      fpga_data_in      => fpga_data_in,
-      fpga_data_out     => fpga_data_out,
+      fpga_data         => fpga_data,
       fpga_valid_in     => fpga_valid_in,
       fpga_valid_out    => fpga_valid_out,
       fpga_clk_in       => fpga_clk_in,
@@ -281,26 +297,44 @@ begin
   -----------------------------------------------------------------------------
 
   -- Drive unused clock monitors and JTAG output pins
-  -- unused_interface_gen : for i in 0 to CFG_TILES_NUM - 1 generate
-  --  unused_td_io_gen : if i /= cpu_tile_id(0) and i /= io_tile_id and i /= mem_tile_id(0) generate
-  --    tdo(i) <= '0';
-  --  end generate unused_td_io_gen;
-  --end generate unused_interface_gen;
+  unused_interface_gen : for i in 0 to CFG_TILES_NUM - 1 generate
+    unused_ext_clk_io_gen : if i /= cpu_tile_id(0) and i /= io_tile_id and i /= mem_tile_id(0) generate
+      clk_div(i) <= '0';
+    end generate unused_ext_clk_io_gen;
+    unused_td_io_gen : if i /= cpu_tile_id(0) and i /= io_tile_id and i /= mem_tile_id(0) generate
+      tdo(i) <= '0';
+    end generate unused_td_io_gen;
+  end generate unused_interface_gen;
 
-  chip_i : ESP_ASIC_TOP
+  chip_i : ASIC_3x3_TOP
     generic map (
+      CLUSTER_EN => CLUSTER_EN,
       SIMULATION => SIMULATION)
     port map (
       reset           => reset,
-      ext_clk         => ext_clk_noc,
-      fpga_data_in    => fpga_data_in,
-      fpga_data_out   => fpga_data_out,
+      ext_clk_noc     => ext_clk_noc,
+      ext_clk_io      => ext_clk(io_tile_id),
+      ext_clk_cpu     => ext_clk(cpu_tile_id(0)),
+      ext_clk_mem     => ext_clk(mem_tile_id(0)),
+      clk_div_noc     => clk_div_noc,
+      clk_div_io      => clk_div(io_tile_id),
+      clk_div_cpu     => clk_div(cpu_tile_id(0)),
+      clk_div_mem     => clk_div(mem_tile_id(0)),
+      fpga_data       => fpga_data,
       fpga_valid_in   => fpga_valid_in,
       fpga_valid_out  => fpga_valid_out,
       fpga_clk_in     => fpga_clk_in,
       fpga_clk_out    => fpga_clk_out,
       fpga_credit_in  => fpga_credit_in,
       fpga_credit_out => fpga_credit_out,
+      tdi_cpu         => tdi(cpu_tile_id(0)),
+      tdi_io          => tdi(io_tile_id),
+      tdi_mem         => tdi(mem_tile_id(0)),
+      tdo_cpu         => tdo(cpu_tile_id(0)),
+      tdo_io          => tdo(io_tile_id),
+      tdo_mem         => tdo(mem_tile_id(0)),
+      tms             => tms,
+      tclk            => tclk,
       reset_o2        => reset_o2,
       etx_clk         => etx_clk,
       erx_clk         => erx_clk,
@@ -319,14 +353,14 @@ begin
       uart_txd        => uart_txd,
       uart_ctsn       => uart_ctsn,
       uart_rtsn       => uart_rtsn,
-      tdi_io          => tdi(0),
-      tdi_cpu         => tdi(1),
-      tdi_mem         => tdi(3),
-      tdi_acc         => tdi(2),
-      tdo_io          => tdo(0),
-      tdo_cpu         => tdo(1),
-      tdo_mem         => tdo(3),
-      tdo_acc         => tdo(2)
-    );
+      ivr_pmb_dat     => '0',
+      ivr_pmb_clk     => '0',
+      ivr_avs_clk     => '0',
+      ivr_avs_dat     => '0',
+      ivr_avs_sdat    => '0',
+      ivr_control     => '0',
+      ivr_gpio        => (others => '0'),
+      unused          => '0'
+      );
 
 end;

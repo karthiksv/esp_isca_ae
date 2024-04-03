@@ -19,7 +19,7 @@ CONFIG_SLM_KBYTES = 256
 #CONFIG_MON_DVFS is not set
 TILE_0_0 = 0 cpu cpu 0 0 0 0
 TILE_0_1 = 1 misc IO 0 0 0
-TILE_0_2 = 2 acc NV_NVDLA 0 0 0  0 1 nvidia
+TILE_0_2 = 2 acc VITDODEC_STRATUS 0 0 0 basic_dma64 0 1 sld
 TILE_1_0 = 3 acc FFT2_STRATUS 0 0 0 basic_fx32_dma64 0 1 sld
 TILE_1_1 = 4 mem mem 0 0 0
 TILE_1_2 = 5 acc VITDODEC_STRATUS 0 0 0 basic_dma64 0 1 sld
@@ -30,7 +30,7 @@ TILE_2_2 = 8 acc FFT2_STRATUS 0 0 0 basic_fx32_dma64 0 1 sld
 CONFIG_VF_POINTS = 4
 POWER_0_0 = cpu 0 0 0 0 0 0 0 0 0 0 0 0 
 POWER_0_1 = IO 0 0 0 0 0 0 0 0 0 0 0 0 
-POWER_0_2 = NV_NVDLA 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 
+POWER_0_2 = VITDODEC_STRATUS 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 
 POWER_1_0 = FFT2_STRATUS 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 
 POWER_1_1 = mem 0 0 0 0 0 0 0 0 0 0 0 0 
 POWER_1_2 = VITDODEC_STRATUS 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 

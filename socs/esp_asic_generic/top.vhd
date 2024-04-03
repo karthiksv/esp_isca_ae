@@ -106,7 +106,8 @@ architecture rtl of top is
       clk_div_io      : out   std_logic;
       clk_div_cpu     : out   std_logic;
       clk_div_mem     : out   std_logic;
-      fpga_data       : inout std_logic_vector(64 - 1 downto 0);
+      fpga_data_in       : in std_logic_vector(64 - 1 downto 0);
+            fpga_data_out       : out std_logic_vector(64 - 1 downto 0);
       fpga_valid_in   : in    std_logic_vector(0 downto 0);
       fpga_valid_out  : out   std_logic_vector(0 downto 0);
       fpga_clk_in     : in    std_logic_vector(0 downto 0);
@@ -160,7 +161,8 @@ architecture rtl of top is
       ext_clk           : out   std_logic_vector(0 to CFG_TILES_NUM - 1);
       main_clk_p        : in    std_ulogic;
       main_clk_n        : in    std_ulogic;
-      fpga_data         : inout std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
+      fpga_data_in         : out std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
+      fpga_data_out         : in std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
       fpga_valid_in     : out   std_logic_vector(0 to CFG_NMEM_TILE - 1);
       fpga_valid_out    : in    std_logic_vector(0 to CFG_NMEM_TILE - 1);
       fpga_clk_in       : out   std_logic_vector(0 to CFG_NMEM_TILE - 1);
@@ -209,7 +211,8 @@ architecture rtl of top is
   end component fpga_proxy_top;
 
   -- FPGA proxy memory link
-  signal fpga_data       : std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
+  signal fpga_data_in       : std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
+    signal fpga_data_out       : std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
   signal fpga_valid_in   : std_logic_vector(CFG_NMEM_TILE - 1 downto 0);
   signal fpga_valid_out  : std_logic_vector(CFG_NMEM_TILE - 1 downto 0);
   signal fpga_clk_in     : std_logic_vector(CFG_NMEM_TILE - 1 downto 0);
@@ -244,7 +247,8 @@ begin
       ext_clk           => ext_clk,
       main_clk_p        => main_clk_p,
       main_clk_n        => main_clk_n,
-      fpga_data         => fpga_data,
+      fpga_data_in      => fpga_data_in,
+      fpga_data_out     => fpga_data_out,
       fpga_valid_in     => fpga_valid_in,
       fpga_valid_out    => fpga_valid_out,
       fpga_clk_in       => fpga_clk_in,
@@ -320,7 +324,8 @@ begin
       clk_div_io      => clk_div(io_tile_id),
       clk_div_cpu     => clk_div(cpu_tile_id(0)),
       clk_div_mem     => clk_div(mem_tile_id(0)),
-      fpga_data       => fpga_data,
+      fpga_data_in    => fpga_data_in,
+      fpga_data_out   => fpga_data_out,
       fpga_valid_in   => fpga_valid_in,
       fpga_valid_out  => fpga_valid_out,
       fpga_clk_in     => fpga_clk_in,

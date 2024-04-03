@@ -63,9 +63,9 @@ begin  -- architecture rtl
     end if;
   end process;
 
-  gf12_gen : if (tech = gf12) generate
+  inferred_gen : if (tech = inferred) generate
 
-    x0 : gf12_dco
+    x0 : behav_dco
       generic map (
         enable_div2 => enable_div2)
       port map (

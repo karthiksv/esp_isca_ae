@@ -43,7 +43,8 @@ entity ASIC_3x3_TOP is
     clk_div_cpu     : out   std_logic;
     clk_div_mem     : out   std_logic;
     -- FPGA proxy memory link
-    fpga_data       : inout std_logic_vector(64 - 1 downto 0);
+    fpga_data_in       : in std_logic_vector(64 - 1 downto 0);
+    fpga_data_out       : out std_logic_vector(64 - 1 downto 0);
     fpga_valid_in   : in    std_logic_vector(0 downto 0);
     fpga_valid_out  : out   std_logic_vector(0 downto 0);
     fpga_clk_in     : in    std_logic_vector(0 downto 0);
@@ -200,8 +201,8 @@ architecture rtl of ASIC_3x3_TOP is
 
   -- FPGA proxy
   signal fpga_oen            : std_logic_vector(CFG_NMEM_TILE - 1 downto 0);
-  signal fpga_data_in        : std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
-  signal fpga_data_out       : std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
+  --signal fpga_data_in        : std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
+  --signal fpga_data_out       : std_logic_vector(CFG_NMEM_TILE * (ARCH_BITS) - 1 downto 0);
   signal fpga_valid_in_int   : std_logic_vector(CFG_NMEM_TILE - 1 downto 0);
   signal fpga_valid_out_int  : std_logic_vector(CFG_NMEM_TILE - 1 downto 0);
   signal fpga_clk_in_int     : std_logic_vector(CFG_NMEM_TILE - 1 downto 0);

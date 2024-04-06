@@ -38,7 +38,8 @@ wire [7:0] LDO_IN;
 
 assign LDO_IN[7:6]=FREQ_SEL;
 assign LDO_IN[5:0]=CC_SEL;
-assign CLK=clk_int[unsigned'(LDO_IN)];
+wire LDO_IN_with_U_forced_to_0 = (LDO_IN === 8'bXXXXXXXX || LDO_IN === 8'bZZZZZZZZ) ? 8'b00000000 : LDO_IN;
+assign CLK=clk_int[unsigned'(LDO_IN_with_U_forced_to_0)];
 assign CLK_DIV=1'b0;
 
 localparam TIME_PERIOD= 10;
@@ -60,7 +61,7 @@ for (i = 0; i < 256 ; i = i + 1) begin
 	initial 
 	begin
 	clk_int[i]=0;
-    forever #TIME_PERIODI clk_int[i]=~clk_int[i]&&EN;
+    forever #TIME_PERIODI clk_int[i]=~clk_int[i]&&((EN === 1'bX || EN == 1'bZ) ? 1'b1 : EN);
 	end
 end
 endgenerate

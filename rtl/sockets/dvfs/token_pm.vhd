@@ -40,6 +40,7 @@ entity token_pm is
     noc_clk            : in  std_ulogic;
     refclk             : in  std_ulogic;
     tile_clk           : in  std_ulogic;
+	acc_activity       : in  std_ulogic;
     -- runtime configuration for LDO ctrl and token FSM
     pm_config          : in  pm_config_type;
     -- runtime status for LDO ctrl and token FSM
@@ -99,6 +100,7 @@ architecture rtl of token_pm is
   signal acc_clk_div1, acc_clk_div2, acc_clk_div3, acc_clk_div4 : std_ulogic;
   signal acc_clk_div12, acc_clk_div34                           : std_ulogic;
   signal acc_clk_int                                            : std_ulogic;
+  signal acc_activity_1, acc_activity_2, acc_activity_3  : std_ulogic;
 
   attribute mark_debug                     : string;
   attribute mark_debug of freq_target      : signal is "true";
@@ -181,7 +183,17 @@ begin
   -----------------------------------------------------------------------------
   --  Token-based DVFS core
   ------------------------------------------------------------------------------
-
+	--Rescync of activity to noc domain
+ 
+ process(noc_clk)
+ begin 
+  if(rising_edge(noc_clk)) then
+   	acc_activity_2 <= acc_activity_1; 
+   	acc_activity_1 <= acc_activity; 
+  end if;      
+  acc_activity_3<=pm_config(1)(0) or acc_activity_2;
+ end process;  
+	
   pm_status(0)(31 downto 15) <= (others => '0');
   Token_FSM_i : Token_FSM
     port map (
@@ -198,7 +210,7 @@ begin
       max_tokens             => pm_config(0)(6 downto 1),   -- max_tokens
       refresh_rate_min       => pm_config(0)(18 downto 7),  -- refresh_rate_min
       refresh_rate_max       => pm_config(0)(30 downto 19),  -- refresh_rate_max
-      activity               => pm_config(1)(0),            -- activity
+      activity               => acc_activity_3,            -- activity
       random_rate            => pm_config(1)(5 downto 1),   -- random_rate
       LUT_write              => pm_config(1)(23 downto 6),  -- LUT_write
       token_counter_override => pm_config(1)(31 downto 24),  -- token_counter_override

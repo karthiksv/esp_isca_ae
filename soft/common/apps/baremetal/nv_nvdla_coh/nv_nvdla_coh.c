@@ -27,7 +27,7 @@ static unsigned DMA_WORD_PER_BEAT(unsigned _st)
 
 #define CSR_TILE_SIZE 0x200
 #define CSR_BASE_ADDR 0x60090000
-#define COH_REG_INDEX 107
+#define COH_REG_INDEX 99
 
 static unsigned i_base;
 static unsigned w_base;

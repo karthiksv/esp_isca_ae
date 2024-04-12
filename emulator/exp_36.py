@@ -1,20 +1,21 @@
 import matplotlib.pyplot as plt
 PLOT = 1
+HET_ONLY=1 #Set =1 to run the convergence and heterogeneity check only
 
+if (HET_ONLY!=1):
+	from convergence_speed_BC_baseline import *
+	convergence_speed_BC_baseline()
 
-from convergence_speed_BC_baseline import *
-convergence_speed_BC_baseline()
+	from convergence_speed_BC_4way import *
+	convergence_speed_BC_4way()
 
-from convergence_speed_BC_4way import *
-convergence_speed_BC_4way()
-
-from convergence_speed_BC_smart_timing import *
-convergence_speed_BC_smart_timing()
+	from convergence_speed_BC_smart_timing import *
+	convergence_speed_BC_smart_timing()
 
 from convergence_heterogeneity import *
 convergence_heterogeneity()
 
-if PLOT:
+if (PLOT and (HET_ONLY!=1)):
 	
 	#plt.figure('1-way vs 4 way')	
 	#fig, ax1 = plt.subplots()
@@ -65,6 +66,7 @@ if PLOT:
 
 	plt.show()
 
+if PLOT:	
 	#plt.figure('Heterogeneity')
 	
 	# set width of bar 
@@ -77,10 +79,11 @@ if PLOT:
 	convdata=pd.read_csv('conv_het_file.csv').T
 	errdata=pd.read_csv('err_het_file.csv')
 	
-	convdata_new = convdata[:][1:]
-	errdata_new = errdata[:][1:]
+	convdata_new = convdata[:][:-1]
+	errdata_new = errdata.iloc[:,:-1][:]
 	ind = [int(convdata[i]['N']) for i in range(0,len(convdata.T))]
 	
+
 	# Set position of bar on X axis 
 	b = np.arange(len(convdata_new[0])) 
 	for i in range(0,len(ind)):
@@ -99,12 +102,6 @@ if PLOT:
 	ax2.legend(loc='upper center')
 	
 	plt.show() 
-
-	
-
-
-
-
 
 
 

@@ -12,7 +12,9 @@ from one_pass_token_smart_timing_heter import one_pass
 
 #Specific to this experiment
 Nlist=[2,3,4,5,8,10,12,15,18,20]
+#Nlist=[2,3]
 Nacclist=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+#Nacclist=[1,2,3]
 autostop=True
 circular=True
 smart_time=False
@@ -53,9 +55,14 @@ def convergence_heterogeneity():
 		fconv = open(conv_file, 'w')
 		ferr = open(err_file, 'w')
 
-		fconv.write("Nacc,N,conv_time\n")
-		ferr.write("Nacc,N,init_err\n")
-		
+		fconv.write("N,conv_time")
+		for i in range(len(Nacclist)):
+			fconv.write(",")
+		fconv.write("\n")
+		ferr.write("N,init_err")
+		for i in range(len(Nacclist)):
+			ferr.write(",")
+		ferr.write("\n")
 		for N in Nlist:
 			v=0
 			fconv.write(str(N)+",")
@@ -91,4 +98,4 @@ def convergence_heterogeneity():
 		fconv.close()
 		ferr.close()
 
-print("Please use heterogeneity_python_post_process.xls for generating graphs form csv \n")
+#print("Please use heterogeneity_python_post_process.xls for generating graphs form csv \n")

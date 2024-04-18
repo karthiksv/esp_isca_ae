@@ -57,7 +57,7 @@ genvar i;
 
 generate
 for (i = 0; i < 256 ; i = i + 1) begin
-	localparam TIME_PERIODI=4.0*DELAYS[i]/2.0;
+	localparam TIME_PERIODI=8.0*DELAYS[i]/2.0;
 	initial 
 	begin
 	clk_int[i]=0;

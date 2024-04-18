@@ -117,7 +117,6 @@ void start_tile(struct esp_device espdevs[], unsigned tile_id)
 	//iowrite32(dev_list_acc[i], CMD_REG, CMD_MASK_START);
 	for (i=0; i<N_ACC; i++)
 		set_freq(&espdevs[i],freq[i]);
-	if 
 	#ifdef DEBUG
 		printf("Starting Tile %d addr: 0x%x, frequency is 0x%x\n",tile_id, espdevs[tile_id].addr, freq[tile_id]);
 	#endif

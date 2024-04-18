@@ -151,7 +151,7 @@ int main(int argc, char * argv[])
 	//printf("Accelerators setup done\n");
 	// Flush (customize coherence model here)
 	if (coherence != ACC_COH_RECALL)
-		esp_flush(coherence, 1);
+		esp_flush(coherence);
 
 	printf("Start accelerators\n");
 	///////Start accelerators//////
